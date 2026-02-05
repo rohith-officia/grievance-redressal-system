@@ -6,6 +6,7 @@ import com.example.complaint_system.DTO.ResponseHeadDTO;
 import com.example.complaint_system.DTO.UserRequestDTO;
 import com.example.complaint_system.Models.UserModel;
 import com.example.complaint_system.Repository.UserRepository;
+import com.example.complaint_system.Security.JwtService;
 import com.example.complaint_system.Service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -48,6 +49,9 @@ public class UserServiceImp implements UserService {
         return new ResponseEntity<>(responseDTO, HttpStatus.CREATED);
     }
 
+    @Autowired
+    JwtService  jwtService;
+
     @Override
     public ResponseEntity<ResponseDTO<Map<String, Object>>> loginUser(UserRequestDTO userRequestDTO) {
         Optional<UserModel> userModel =  userRepository.findByEmail(userRequestDTO.getEmail());
@@ -55,8 +59,9 @@ public class UserServiceImp implements UserService {
         if(!userModel.isEmpty()){
             UserModel user = userModel.get();
             if(passwordEncoder.matches(userRequestDTO.getPassword(), user.getPassword())){
+                String token = jwtService.generateToken(user.getEmail());
                 ResponseHeadDTO responseHeadDTO = new ResponseHeadDTO("successfully" , 200 , "User login successfully");
-                ResponseDTO responseDTO = new ResponseDTO (responseHeadDTO , "token");
+                ResponseDTO responseDTO = new ResponseDTO (responseHeadDTO , token);
                 return new ResponseEntity<>(responseDTO , HttpStatus.OK);
             }
             else{
@@ -70,3 +75,4 @@ public class UserServiceImp implements UserService {
             return new ResponseEntity<>(responseDTO, HttpStatus.BAD_REQUEST);
     }
 }
+    
