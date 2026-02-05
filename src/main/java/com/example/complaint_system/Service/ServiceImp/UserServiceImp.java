@@ -1,5 +1,6 @@
 package com.example.complaint_system.Service.ServiceImp;
 
+import ch.qos.logback.core.joran.action.ResourceAction;
 import com.example.complaint_system.DTO.ResponseDTO;
 import com.example.complaint_system.DTO.ResponseHeadDTO;
 import com.example.complaint_system.DTO.UserRequestDTO;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 @Service
 public class UserServiceImp implements UserService {
@@ -23,6 +25,7 @@ public class UserServiceImp implements UserService {
 
     @Autowired
     private UserRepository userRepository;
+
 
     @Override
     public ResponseEntity<ResponseDTO<Map<String, Object>>> registerUser(UserRequestDTO userRequestDTO) {
@@ -43,5 +46,27 @@ public class UserServiceImp implements UserService {
         ResponseHeadDTO responseHeadDTO = new ResponseHeadDTO("successfully" , 201 , "User registered successfully");
         ResponseDTO<Map<String, Object>> responseDTO = new ResponseDTO(responseHeadDTO , responseData);
         return new ResponseEntity<>(responseDTO, HttpStatus.CREATED);
+    }
+
+    @Override
+    public ResponseEntity<ResponseDTO<Map<String, Object>>> loginUser(UserRequestDTO userRequestDTO) {
+        Optional<UserModel> userModel =  userRepository.findByEmail(userRequestDTO.getEmail());
+
+        if(!userModel.isEmpty()){
+            UserModel user = userModel.get();
+            if(passwordEncoder.matches(userRequestDTO.getPassword(), user.getPassword())){
+                ResponseHeadDTO responseHeadDTO = new ResponseHeadDTO("successfully" , 200 , "User login successfully");
+                ResponseDTO responseDTO = new ResponseDTO (responseHeadDTO , "token");
+                return new ResponseEntity<>(responseDTO , HttpStatus.OK);
+            }
+            else{
+                ResponseHeadDTO responseHeadDTO =  new ResponseHeadDTO("failure" , 401 , "Invalid username or password");
+                ResponseDTO responseDTO = new ResponseDTO(responseHeadDTO , null);
+                return new ResponseEntity<>(responseDTO, HttpStatus.NOT_ACCEPTABLE);
+            }
+        }
+            ResponseHeadDTO responseHeadDTO =   new ResponseHeadDTO("failure" , 401 , "User does not exist");
+            ResponseDTO responseDTO = new ResponseDTO(responseHeadDTO , null);
+            return new ResponseEntity<>(responseDTO, HttpStatus.BAD_REQUEST);
     }
 }

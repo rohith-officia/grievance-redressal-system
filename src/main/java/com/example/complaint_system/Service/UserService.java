@@ -9,4 +9,6 @@ import java.util.Map;
 
 public interface UserService {
     ResponseEntity<ResponseDTO<Map<String, Object>>> registerUser(UserRequestDTO userRequestDTO);
+
+    ResponseEntity<ResponseDTO<Map<String, Object>>> loginUser(UserRequestDTO userRequestDTO);
 }

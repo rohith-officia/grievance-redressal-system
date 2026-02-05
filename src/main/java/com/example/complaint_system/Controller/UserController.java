@@ -26,9 +26,19 @@ public class UserController {
     public ResponseEntity<ResponseDTO<Map<String , Object>>> registerUser(@RequestBody UserRequestDTO userRequestDTO) {
         if(userRequestDTO.getEmail() == null || userRequestDTO.getUsername() == null || userRequestDTO.getPassword() == null || userRequestDTO.getRole() == null) {
             ResponseHeadDTO responseHeadDTO = new ResponseHeadDTO("Unsuccessfull" , 400 , "Invalid Input");
-            ResponseDTO<Map<String, Object>> responseDTO = new ResponseDTO(responseHeadDTO , null);
+            ResponseDTO<Map<String, Object>> responseDTO = new ResponseDTO<>(responseHeadDTO , null);
             return new ResponseEntity<>(responseDTO, HttpStatus.BAD_REQUEST);
         }
         return userService.registerUser(userRequestDTO);
+    }
+
+    @PostMapping("login/")
+    public ResponseEntity<ResponseDTO<Map<String, Object>>> loginUser(@RequestBody UserRequestDTO userRequestDTO) {
+        if(userRequestDTO.getEmail() == null && userRequestDTO.getUsername() == null || userRequestDTO.getPassword() == null) {
+            ResponseHeadDTO responseHeadDTO = new ResponseHeadDTO("Unsuccessfull" , 400 , "Invalid Input");
+            ResponseDTO<Map<String, Object>> responseDTO = new ResponseDTO<>(responseHeadDTO , null);
+            return new ResponseEntity<>(responseDTO, HttpStatus.BAD_REQUEST);
+        }
+        return userService.loginUser(userRequestDTO);
     }
 }
