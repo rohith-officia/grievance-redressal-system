@@ -9,6 +9,7 @@ import com.example.complaint_system.Service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
@@ -18,13 +19,16 @@ import java.util.Map;
 public class UserServiceImp implements UserService {
 
     @Autowired
+    private BCryptPasswordEncoder passwordEncoder;
+
+    @Autowired
     private UserRepository userRepository;
 
     @Override
     public ResponseEntity<ResponseDTO<Map<String, Object>>> registerUser(UserRequestDTO userRequestDTO) {
         UserModel userModel = new UserModel();
         userModel.setEmail(userRequestDTO.getEmail());
-        userModel.setPassword(userRequestDTO.getPassword());
+        userModel.setPassword(passwordEncoder.encode(userRequestDTO.getPassword()));
         userModel.setUsername(userRequestDTO.getUsername());
         userModel.setRole(userRequestDTO.getRole());
         userRepository.save(userModel);
