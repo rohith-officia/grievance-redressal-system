@@ -1,6 +1,7 @@
 package com.example.complaint_system.Service.ServiceImp;
 
 import ch.qos.logback.core.joran.action.ResourceAction;
+import com.example.complaint_system.Config.JWTConfig;
 import com.example.complaint_system.DTO.ResponseDTO;
 import com.example.complaint_system.DTO.ResponseHeadDTO;
 import com.example.complaint_system.DTO.UserRequestDTO;
@@ -11,6 +12,12 @@ import com.example.complaint_system.Service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -52,27 +59,59 @@ public class UserServiceImp implements UserService {
     @Autowired
     JwtService  jwtService;
 
-    @Override
-    public ResponseEntity<ResponseDTO<Map<String, Object>>> loginUser(UserRequestDTO userRequestDTO) {
-        Optional<UserModel> userModel =  userRepository.findByEmail(userRequestDTO.getEmail());
+    @Autowired
+    AuthenticationManager authenticationManager;
 
-        if(!userModel.isEmpty()){
-            UserModel user = userModel.get();
-            if(passwordEncoder.matches(userRequestDTO.getPassword(), user.getPassword())){
-                String token = jwtService.generateToken(user.getEmail());
-                ResponseHeadDTO responseHeadDTO = new ResponseHeadDTO("successfully" , 200 , "User login successfully");
-                ResponseDTO responseDTO = new ResponseDTO (responseHeadDTO , token);
-                return new ResponseEntity<>(responseDTO , HttpStatus.OK);
-            }
-            else{
-                ResponseHeadDTO responseHeadDTO =  new ResponseHeadDTO("failure" , 401 , "Invalid username or password");
-                ResponseDTO responseDTO = new ResponseDTO(responseHeadDTO , null);
-                return new ResponseEntity<>(responseDTO, HttpStatus.NOT_ACCEPTABLE);
-            }
+    @Override
+    public ResponseEntity<ResponseDTO<Map<String, Object>>> loginUser(
+            UserRequestDTO userRequestDTO) {
+
+        try {
+            Authentication authentication = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(
+                            userRequestDTO.getEmail(),
+                            userRequestDTO.getPassword()
+                    )
+            );
+
+            // Store authenticated user in SecurityContext
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+
+            String token = jwtService.generateToken(authentication.getName());
+
+            Map<String, Object> responseData = new HashMap<>();
+            responseData.put("token", token);
+            responseData.put("Username", authentication.getName());
+            responseData.put("roles", authentication.getAuthorities());
+
+            ResponseHeadDTO responseHeadDTO =
+                    new ResponseHeadDTO("success", 200, "User login successfully");
+
+            ResponseDTO<Map<String, Object>> responseDTO =
+                    new ResponseDTO<>(responseHeadDTO, responseData);
+
+            return new ResponseEntity<>(responseDTO, HttpStatus.OK);
+
+        } catch (BadCredentialsException ex) {
+
+            ResponseHeadDTO responseHeadDTO =
+                    new ResponseHeadDTO("failure", 401, "Invalid email or password");
+
+            ResponseDTO<Map<String, Object>> responseDTO =
+                    new ResponseDTO<>(responseHeadDTO, null);
+
+            return new ResponseEntity<>(responseDTO, HttpStatus.UNAUTHORIZED);
+
+        } catch (UsernameNotFoundException ex) {
+
+            ResponseHeadDTO responseHeadDTO =
+                    new ResponseHeadDTO("failure", 404, "User does not exist");
+
+            ResponseDTO<Map<String, Object>> responseDTO =
+                    new ResponseDTO<>(responseHeadDTO, null);
+
+            return new ResponseEntity<>(responseDTO, HttpStatus.NOT_FOUND);
         }
-            ResponseHeadDTO responseHeadDTO =   new ResponseHeadDTO("failure" , 401 , "User does not exist");
-            ResponseDTO responseDTO = new ResponseDTO(responseHeadDTO , null);
-            return new ResponseEntity<>(responseDTO, HttpStatus.BAD_REQUEST);
     }
 }
     
