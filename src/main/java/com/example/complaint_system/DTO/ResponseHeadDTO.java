@@ -9,6 +9,7 @@ public class ResponseHeadDTO {
     private String message;
     private LocalDateTime timestamp;
 
+
     public ResponseHeadDTO(String status , int statusCode , String message){
         this.status = status;
         this.code = statusCode;
@@ -38,6 +39,14 @@ public class ResponseHeadDTO {
 
     public void setMessage(String message) {
         this.message = message;
+    }
+
+    public LocalDateTime getTimestamp() {
+        return timestamp;
+    }
+
+    public void setTimestamp(LocalDateTime timestamp) {
+        this.timestamp = timestamp;
     }
 
 }
