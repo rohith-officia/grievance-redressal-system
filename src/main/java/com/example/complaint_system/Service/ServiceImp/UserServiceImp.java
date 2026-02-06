@@ -3,7 +3,9 @@ package com.example.complaint_system.Service.ServiceImp;
 import com.example.complaint_system.DTO.ResponseDTO;
 import com.example.complaint_system.DTO.ResponseHeadDTO;
 import com.example.complaint_system.DTO.UserRequestDTO;
+import com.example.complaint_system.Models.ComplaintsModel;
 import com.example.complaint_system.Models.UserModel;
+import com.example.complaint_system.Repository.ComplaintRespository;
 import com.example.complaint_system.Repository.UserRepository;
 import com.example.complaint_system.Security.JwtService;
 import com.example.complaint_system.Service.UserService;
@@ -19,7 +21,9 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -109,6 +113,42 @@ public class UserServiceImp implements UserService {
 
             return new ResponseEntity<>(responseDTO, HttpStatus.NOT_FOUND);
         }
+    }
+
+    @Autowired
+    ComplaintRespository complaintRespository;
+
+    @Override
+    public ResponseEntity<ResponseDTO<List<Map<String, Object>>>> my_complaints() {
+        Authentication auth =  SecurityContextHolder.getContext().getAuthentication();
+        String email = auth.getName();
+
+        UserModel user = userRepository.findByEmail(email)
+                .orElseThrow(() ->
+                        new RuntimeException("Authenticated user not found")
+                );
+
+        List<ComplaintsModel> complaints = complaintRespository.findByUser(user);
+        List<Map<String, Object>> complaintList = new ArrayList<>();
+
+        for (ComplaintsModel c : complaints) {
+            Map<String, Object> map = new HashMap<>();
+            map.put("id", c.getId());
+            map.put("title", c.getTitle());
+            map.put("department", c.getDepartment());
+            map.put("status", c.getStatus());
+            map.put("createdAt", c.getCreatedAt());
+            complaintList.add(map);
+        }
+
+        ResponseHeadDTO head =
+                new ResponseHeadDTO("success", 200, "My complaints fetched");
+
+        return new ResponseEntity <>(
+                new ResponseDTO<>(head, complaintList) ,
+                HttpStatus.OK
+        );
+
     }
 }
     

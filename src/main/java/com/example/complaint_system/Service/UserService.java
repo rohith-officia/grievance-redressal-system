@@ -5,10 +5,13 @@ import com.example.complaint_system.DTO.UserRequestDTO;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Map;
 
 public interface UserService {
     ResponseEntity<ResponseDTO<Map<String, Object>>> registerUser(UserRequestDTO userRequestDTO);
 
     ResponseEntity<ResponseDTO<Map<String, Object>>> loginUser(UserRequestDTO userRequestDTO);
+
+    ResponseEntity<ResponseDTO<List<Map<String, Object>>>> my_complaints();
 }
