@@ -1,7 +1,5 @@
 package com.example.complaint_system.Service.ServiceImp;
 
-import ch.qos.logback.core.joran.action.ResourceAction;
-import com.example.complaint_system.Config.JWTConfig;
 import com.example.complaint_system.DTO.ResponseDTO;
 import com.example.complaint_system.DTO.ResponseHeadDTO;
 import com.example.complaint_system.DTO.UserRequestDTO;
@@ -23,7 +21,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 
 @Service
 public class UserServiceImp implements UserService {

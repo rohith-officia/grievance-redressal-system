@@ -2,12 +2,12 @@ package com.example.complaint_system.DTO;
 
 public class ComplaintRequestDTO {
 
-    private String email;
+    private String department;
     private String title;
     private String description;
 
-    public String getEmail() {
-        return email;
+    public String getDepartment() {
+        return department;
     }
 
     public String getTitle() {
