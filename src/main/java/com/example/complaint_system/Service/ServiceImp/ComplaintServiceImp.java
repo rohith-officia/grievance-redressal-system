@@ -69,7 +69,7 @@ public class ComplaintServiceImp implements ComplaintService {
         responseData.put("createdBy", userMap);
 
         ResponseHeadDTO head =
-                new ResponseHeadDTO("success", 201, "Complaint registered successfully");
+                new ResponseHeadDTO(CPT_SYTMUtil.SUCCESS, CPT_SYTMUtil.CREATED_CODE, CPT_SYTMUtil.COMPLAINTS_REGISTERED);
 
         return new ResponseEntity<>(
                 new ResponseDTO<>(head, responseData),

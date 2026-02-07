@@ -87,7 +87,7 @@ public class UserServiceImp implements UserService {
             responseData.put("roles", authentication.getAuthorities());
 
             ResponseHeadDTO responseHeadDTO =
-                    new ResponseHeadDTO("success", 200, "User login successfully");
+                    new ResponseHeadDTO(CPT_SYTMUtil.SUCCESS, CPT_SYTMUtil.SUCCESS_CODE, CPT_SYTMUtil.LOGIN_SUCCESS);
 
             ResponseDTO<Map<String, Object>> responseDTO =
                     new ResponseDTO<>(responseHeadDTO, responseData);
@@ -97,7 +97,7 @@ public class UserServiceImp implements UserService {
         } catch (BadCredentialsException ex) {
 
             ResponseHeadDTO responseHeadDTO =
-                    new ResponseHeadDTO("failure", 401, "Invalid email or password");
+                    new ResponseHeadDTO(CPT_SYTMUtil.FAILURE, CPT_SYTMUtil.UNAUTHORIZED_CODE, CPT_SYTMUtil.INVALID_PASSWORD_INVALID_USERNAME);
 
             ResponseDTO<Map<String, Object>> responseDTO =
                     new ResponseDTO<>(responseHeadDTO, null);
@@ -107,7 +107,7 @@ public class UserServiceImp implements UserService {
         } catch (UsernameNotFoundException ex) {
 
             ResponseHeadDTO responseHeadDTO =
-                    new ResponseHeadDTO("failure", 404, "User does not exist");
+                    new ResponseHeadDTO(CPT_SYTMUtil.FAILURE, CPT_SYTMUtil.UNAUTHORIZED_CODE, CPT_SYTMUtil.USER_NOT_FOUND);
 
             ResponseDTO<Map<String, Object>> responseDTO =
                     new ResponseDTO<>(responseHeadDTO, null);
@@ -143,7 +143,7 @@ public class UserServiceImp implements UserService {
         }
 
         ResponseHeadDTO head =
-                new ResponseHeadDTO("success", 200, "My complaints fetched");
+                new ResponseHeadDTO(CPT_SYTMUtil.SUCCESS, CPT_SYTMUtil.SUCCESS_CODE, CPT_SYTMUtil.COMPLAINTS_FETCHED);
 
         return new ResponseEntity <>(
                 new ResponseDTO<>(head, complaintList) ,
