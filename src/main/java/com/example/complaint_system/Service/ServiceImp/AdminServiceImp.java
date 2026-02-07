@@ -36,7 +36,8 @@ public class AdminServiceImp implements AdminService {
                 .orElseThrow(() ->
                         new RuntimeException("User not found"));
 
-        if(user.getRole().equals("ADMIN")){
+
+        if(CPT_SYTMUtil.CHECK_ROLE(user.getRole().toLowerCase())) {
             ResponseHeadDTO responseHeadDTO = new ResponseHeadDTO(CPT_SYTMUtil.SUCCESS ,CPT_SYTMUtil.ACCEPTED_CODE, CPT_SYTMUtil.COMPLAINTS_FETCHED);
             ResponseDTO responseDTO = new ResponseDTO(responseHeadDTO , adminDAO.getAllUser());
             return new ResponseEntity<>(responseDTO,HttpStatus.ACCEPTED);

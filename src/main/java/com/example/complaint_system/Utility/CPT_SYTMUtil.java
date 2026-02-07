@@ -9,6 +9,13 @@ public class CPT_SYTMUtil {
         CLOSED
     }
 
+    public static boolean CHECK_ROLE(String role) {
+        if(role.equals("admin")) {
+            return true;
+        }
+        return false;
+    }
+
     public static final String SUCCESS = "success";
     public static final String FAILURE = "failure";
     public static final String CANCELLED = "cancelled";
