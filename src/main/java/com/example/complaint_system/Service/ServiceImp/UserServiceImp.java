@@ -9,6 +9,7 @@ import com.example.complaint_system.Repository.ComplaintRespository;
 import com.example.complaint_system.Repository.UserRepository;
 import com.example.complaint_system.Security.JwtService;
 import com.example.complaint_system.Service.UserService;
+import com.example.complaint_system.Utility.CPT_SYTMUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -52,7 +53,7 @@ public class UserServiceImp implements UserService {
         responseData.put("role", userModel.getRole());
 
 
-        ResponseHeadDTO responseHeadDTO = new ResponseHeadDTO("successfully" , 201 , "User registered successfully");
+        ResponseHeadDTO responseHeadDTO = new ResponseHeadDTO(CPT_SYTMUtil.SUCCESS, CPT_SYTMUtil.CREATED_CODE , CPT_SYTMUtil.REGISTRATION_SUCCESS);
         ResponseDTO<Map<String, Object>> responseDTO = new ResponseDTO(responseHeadDTO , responseData);
         return new ResponseEntity<>(responseDTO, HttpStatus.CREATED);
     }

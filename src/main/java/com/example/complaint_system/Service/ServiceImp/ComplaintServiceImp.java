@@ -8,6 +8,7 @@ import com.example.complaint_system.Models.UserModel;
 import com.example.complaint_system.Repository.ComplaintRespository;
 import com.example.complaint_system.Repository.UserRepository;
 import com.example.complaint_system.Service.ComplaintService;
+import com.example.complaint_system.Utility.CPT_SYTMUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,7 +19,6 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 
 @Service
 public class ComplaintServiceImp implements ComplaintService {
@@ -46,7 +46,7 @@ public class ComplaintServiceImp implements ComplaintService {
         complaint.setTitle(complaintRequestDTO.getTitle());
         complaint.setDescription(complaintRequestDTO.getDescription());
         complaint.setDepartment(complaintRequestDTO.getDepartment());
-        complaint.setStatus("OPEN");
+        complaint.setStatus(CPT_SYTMUtil.ComplaintStatus.OPEN);
         complaint.setUser(user);
         complaint.setCreatedAt(LocalDateTime.now());
 

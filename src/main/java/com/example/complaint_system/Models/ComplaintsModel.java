@@ -1,5 +1,6 @@
 package com.example.complaint_system.Models;
 
+import com.example.complaint_system.Utility.CPT_SYTMUtil;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
@@ -23,8 +24,9 @@ public class ComplaintsModel {
     @Column(columnDefinition = "TEXT")
     private String description;
 
-    @Column(length = 50)
-    private String status;
+
+    @Enumerated(EnumType.STRING)
+    private CPT_SYTMUtil.ComplaintStatus status;
 
     @Column(length = 100)
     private String department;
@@ -66,11 +68,11 @@ public class ComplaintsModel {
         this.description = description;
     }
 
-    public String getStatus() {
+    public CPT_SYTMUtil.ComplaintStatus getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(CPT_SYTMUtil.ComplaintStatus status) {
         this.status = status;
     }
 
