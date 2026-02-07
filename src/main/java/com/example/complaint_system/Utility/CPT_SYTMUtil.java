@@ -16,6 +16,7 @@ public class CPT_SYTMUtil {
     public static final String USER_NOT_FOUND = "user not found";
     public static final String USER_ALREADY_EXISTS = "user already exists";
     public static final String USER_LOCKED = "user locked";
+    public static final String USER_UNAUTHORISED = "user unauthorized";
     public static final String REGISTRATION_SUCCESS = "registration success";
     public static final String REGISTRATION_FAILURE = "registration failed";
     public static final String REGISTRATION_CANCELLED = "registration cancelled";

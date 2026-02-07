@@ -40,8 +40,13 @@ public class UserController {
         return userService.loginUser(userRequestDTO);
     }
 
-    @GetMapping("complaints/my")
+    @GetMapping("complaints/my/")
     public ResponseEntity<ResponseDTO<List<Map<String , Object>>>> my_complaints() {
         return userService.my_complaints();
+    }
+
+    @GetMapping("complaint/{id}/")
+    public ResponseEntity<ResponseDTO<Map<String , Object>>> complaint(@PathVariable Long id) {
+        return userService.complaints(id);
     }
 }

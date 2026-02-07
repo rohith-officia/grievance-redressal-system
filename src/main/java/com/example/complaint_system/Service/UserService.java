@@ -14,4 +14,6 @@ public interface UserService {
     ResponseEntity<ResponseDTO<Map<String, Object>>> loginUser(UserRequestDTO userRequestDTO);
 
     ResponseEntity<ResponseDTO<List<Map<String, Object>>>> my_complaints();
+
+    ResponseEntity<ResponseDTO<Map<String, Object>>> complaints(Long id);
 }

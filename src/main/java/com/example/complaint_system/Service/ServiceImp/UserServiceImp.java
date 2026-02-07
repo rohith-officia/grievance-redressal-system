@@ -1,5 +1,6 @@
 package com.example.complaint_system.Service.ServiceImp;
 
+import com.example.complaint_system.DAO.UserDAO;
 import com.example.complaint_system.DTO.ResponseDTO;
 import com.example.complaint_system.DTO.ResponseHeadDTO;
 import com.example.complaint_system.DTO.UserRequestDTO;
@@ -10,6 +11,7 @@ import com.example.complaint_system.Repository.UserRepository;
 import com.example.complaint_system.Security.JwtService;
 import com.example.complaint_system.Service.UserService;
 import com.example.complaint_system.Utility.CPT_SYTMUtil;
+import com.example.complaint_system.Utility.DBUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -67,7 +69,6 @@ public class UserServiceImp implements UserService {
     @Override
     public ResponseEntity<ResponseDTO<Map<String, Object>>> loginUser(
             UserRequestDTO userRequestDTO) {
-
         try {
             Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(
@@ -78,7 +79,6 @@ public class UserServiceImp implements UserService {
 
             // Store authenticated user in SecurityContext
             SecurityContextHolder.getContext().setAuthentication(authentication);
-
             String token = jwtService.generateToken(authentication.getName());
 
             Map<String, Object> responseData = new HashMap<>();
@@ -86,32 +86,20 @@ public class UserServiceImp implements UserService {
             responseData.put("Username", authentication.getName());
             responseData.put("roles", authentication.getAuthorities());
 
-            ResponseHeadDTO responseHeadDTO =
-                    new ResponseHeadDTO(CPT_SYTMUtil.SUCCESS, CPT_SYTMUtil.SUCCESS_CODE, CPT_SYTMUtil.LOGIN_SUCCESS);
-
-            ResponseDTO<Map<String, Object>> responseDTO =
-                    new ResponseDTO<>(responseHeadDTO, responseData);
-
+            ResponseHeadDTO responseHeadDTO = new ResponseHeadDTO(CPT_SYTMUtil.SUCCESS, CPT_SYTMUtil.SUCCESS_CODE, CPT_SYTMUtil.LOGIN_SUCCESS);
+            ResponseDTO<Map<String, Object>> responseDTO = new ResponseDTO<>(responseHeadDTO, responseData);
             return new ResponseEntity<>(responseDTO, HttpStatus.OK);
 
         } catch (BadCredentialsException ex) {
 
-            ResponseHeadDTO responseHeadDTO =
-                    new ResponseHeadDTO(CPT_SYTMUtil.FAILURE, CPT_SYTMUtil.UNAUTHORIZED_CODE, CPT_SYTMUtil.INVALID_PASSWORD_INVALID_USERNAME);
-
-            ResponseDTO<Map<String, Object>> responseDTO =
-                    new ResponseDTO<>(responseHeadDTO, null);
-
+            ResponseHeadDTO responseHeadDTO = new ResponseHeadDTO(CPT_SYTMUtil.FAILURE, CPT_SYTMUtil.UNAUTHORIZED_CODE, CPT_SYTMUtil.INVALID_PASSWORD_INVALID_USERNAME);
+            ResponseDTO<Map<String, Object>> responseDTO = new ResponseDTO<>(responseHeadDTO, null);
             return new ResponseEntity<>(responseDTO, HttpStatus.UNAUTHORIZED);
 
         } catch (UsernameNotFoundException ex) {
 
-            ResponseHeadDTO responseHeadDTO =
-                    new ResponseHeadDTO(CPT_SYTMUtil.FAILURE, CPT_SYTMUtil.UNAUTHORIZED_CODE, CPT_SYTMUtil.USER_NOT_FOUND);
-
-            ResponseDTO<Map<String, Object>> responseDTO =
-                    new ResponseDTO<>(responseHeadDTO, null);
-
+            ResponseHeadDTO responseHeadDTO = new ResponseHeadDTO(CPT_SYTMUtil.FAILURE, CPT_SYTMUtil.UNAUTHORIZED_CODE, CPT_SYTMUtil.USER_NOT_FOUND);
+            ResponseDTO<Map<String, Object>> responseDTO = new ResponseDTO<>(responseHeadDTO, null);
             return new ResponseEntity<>(responseDTO, HttpStatus.NOT_FOUND);
         }
     }
@@ -142,14 +130,39 @@ public class UserServiceImp implements UserService {
             complaintList.add(map);
         }
 
-        ResponseHeadDTO head =
-                new ResponseHeadDTO(CPT_SYTMUtil.SUCCESS, CPT_SYTMUtil.SUCCESS_CODE, CPT_SYTMUtil.COMPLAINTS_FETCHED);
+        ResponseHeadDTO head = new ResponseHeadDTO(CPT_SYTMUtil.SUCCESS, CPT_SYTMUtil.SUCCESS_CODE, CPT_SYTMUtil.COMPLAINTS_FETCHED);
 
-        return new ResponseEntity <>(
-                new ResponseDTO<>(head, complaintList) ,
-                HttpStatus.OK
+        return new ResponseEntity <>(new ResponseDTO<>(head, complaintList) , HttpStatus.OK);
+    }
+
+    @Autowired
+    UserDAO userDAO;
+
+    @Override
+    public ResponseEntity<ResponseDTO<Map<String, Object>>> complaints(Long id) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String email = auth.getName();
+
+        Map<String, Object> responseData = new HashMap<>(
+              userDAO.complaints(id)
         );
 
+        if(!responseData.isEmpty()) {
+            if (responseData.get("email").equals(email)) {
+                ResponseHeadDTO responseHeadDTO = new ResponseHeadDTO(CPT_SYTMUtil.SUCCESS, CPT_SYTMUtil.ACCEPTED_CODE, CPT_SYTMUtil.COMPLAINTS_FETCHED);
+                ResponseDTO<Map<String, Object>> responseDTO =
+                        new ResponseDTO<>(responseHeadDTO, responseData);
+                return new ResponseEntity<>(responseDTO, HttpStatus.OK);
+            }
+            ResponseHeadDTO responseHeadDTO = new ResponseHeadDTO(CPT_SYTMUtil.FAILURE, CPT_SYTMUtil.UNAUTHORIZED_CODE, CPT_SYTMUtil.USER_UNAUTHORISED);
+            ResponseDTO<Map<String, Object>> responseDTO =
+                    new ResponseDTO<>(responseHeadDTO, null);
+            return new ResponseEntity<>(responseDTO, HttpStatus.OK);
+        }
+        ResponseHeadDTO responseHeadDTO = new ResponseHeadDTO(CPT_SYTMUtil.FAILURE , CPT_SYTMUtil.BAD_REQUEST_CODE, CPT_SYTMUtil.COMPLAINTS_NOT_FOUND);
+        ResponseDTO<Map<String, Object>> responseDTO =
+                new ResponseDTO<>(responseHeadDTO, null);
+        return new ResponseEntity<>(responseDTO, HttpStatus.BAD_REQUEST);
     }
 }
     
