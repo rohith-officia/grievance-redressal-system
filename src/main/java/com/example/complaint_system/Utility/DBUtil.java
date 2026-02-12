@@ -33,4 +33,11 @@ public class DBUtil {
                 ON c.user_email = u.email
             ORDER BY c.created_at DESC
         """;
+
+    public static final String UPDATE_COMPLAINT_STATUS = """
+                UPDATE CPTS_LST
+                SET
+                status = ?
+                WHERE id = ?
+        """;
 }

@@ -4,6 +4,7 @@ import com.example.complaint_system.DTO.ResponseDTO;
 import com.example.complaint_system.DTO.ResponseHeadDTO;
 import com.example.complaint_system.DTO.UserRequestDTO;
 import com.example.complaint_system.Service.UserService;
+import com.example.complaint_system.Utility.CPT_SYTMUtil;
 import org.apache.catalina.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -23,7 +24,7 @@ public class UserController {
     @PostMapping("register/")
     public ResponseEntity<ResponseDTO<Map<String , Object>>> registerUser(@RequestBody UserRequestDTO userRequestDTO) {
         if(userRequestDTO.getEmail() == null || userRequestDTO.getUsername() == null || userRequestDTO.getPassword() == null || userRequestDTO.getRole() == null) {
-            ResponseHeadDTO responseHeadDTO = new ResponseHeadDTO("Unsuccessfull" , 400 , "Invalid Input");
+            ResponseHeadDTO responseHeadDTO = new ResponseHeadDTO(CPT_SYTMUtil.FAILURE, CPT_SYTMUtil.BAD_REQUEST_CODE , CPT_SYTMUtil.INVALID_PASSWORD_INVALID_USERNAME );
             ResponseDTO<Map<String, Object>> responseDTO = new ResponseDTO<>(responseHeadDTO , null);
             return new ResponseEntity<>(responseDTO, HttpStatus.BAD_REQUEST);
         }
@@ -33,7 +34,7 @@ public class UserController {
     @PostMapping("login/")
     public ResponseEntity<ResponseDTO<Map<String, Object>>> loginUser(@RequestBody UserRequestDTO userRequestDTO) {
         if(userRequestDTO.getEmail() == null && userRequestDTO.getUsername() == null || userRequestDTO.getPassword() == null) {
-            ResponseHeadDTO responseHeadDTO = new ResponseHeadDTO("Unsuccessfull" , 400 , "Invalid Input");
+            ResponseHeadDTO responseHeadDTO = new ResponseHeadDTO(CPT_SYTMUtil.FAILURE , CPT_SYTMUtil.BAD_REQUEST_CODE , CPT_SYTMUtil.INVALID_PASSWORD_INVALID_USERNAME );
             ResponseDTO<Map<String, Object>> responseDTO = new ResponseDTO<>(responseHeadDTO , null);
             return new ResponseEntity<>(responseDTO, HttpStatus.BAD_REQUEST);
         }

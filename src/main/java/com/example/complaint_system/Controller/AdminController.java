@@ -4,9 +4,7 @@ import com.example.complaint_system.DTO.ResponseDTO;
 import com.example.complaint_system.Service.AdminService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
@@ -21,6 +19,11 @@ public class AdminController {
     @GetMapping("getComaplaints/")
     public ResponseEntity<ResponseDTO<List<Map<String , Object>>>>getComaplaints() {
         return adminService.getComaplaints();
+    }
+
+    @PostMapping("Update/Status/")
+    public ResponseEntity<ResponseDTO<Map<String,Object>>> updateStatus(@RequestBody Map<String,String> status) {
+        return adminService.updateStatus(status);
     }
 
 }

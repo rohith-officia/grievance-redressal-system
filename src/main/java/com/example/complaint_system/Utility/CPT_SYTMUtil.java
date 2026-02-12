@@ -39,6 +39,7 @@ public class CPT_SYTMUtil {
     public static final String COMPLAINTS_CANCELLED = "complaints cancelled";
     public static final String COMPLAINTS_FETCHED = "complaints fetched";
     public static final String COMPLAINTS_REGISTERED = "complaints registered";
+    public static final String STATUS_UPDATED_SUCCESS = "status updated successfully";
 
 
     public static final int SUCCESS_CODE = 200;

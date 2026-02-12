@@ -8,4 +8,6 @@ import java.util.Map;
 
 public interface AdminService {
     ResponseEntity<ResponseDTO<List<Map<String, Object>>>> getComaplaints();
+
+    ResponseEntity<ResponseDTO<Map<String, Object>>> updateStatus(Map<String, String> status);
 }

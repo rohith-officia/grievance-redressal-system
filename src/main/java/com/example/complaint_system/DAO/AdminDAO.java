@@ -19,4 +19,12 @@ public class AdminDAO {
     public List<Map<String , Object>> getAllUser() {
         return adminjdbc.queryForList(DBUtil.FIND_ALL_COMPLAINTS);
     }
+
+    public int updateComplaintStatus(Long complaintId, String status) {
+        return adminjdbc.update(
+                DBUtil.UPDATE_COMPLAINT_STATUS,
+                status,
+                complaintId
+        );
+    }
 }

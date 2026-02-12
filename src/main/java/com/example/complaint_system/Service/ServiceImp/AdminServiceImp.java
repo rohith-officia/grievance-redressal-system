@@ -16,7 +16,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 @Service
 public class AdminServiceImp implements AdminService {
@@ -44,6 +43,25 @@ public class AdminServiceImp implements AdminService {
         }
         ResponseHeadDTO responseHeadDTO = new ResponseHeadDTO(CPT_SYTMUtil.FAILURE ,CPT_SYTMUtil.UNAUTHORIZED_CODE, CPT_SYTMUtil.USER_UNAUTHORISED);
         ResponseDTO responseDTO = new ResponseDTO(responseHeadDTO , null);
-        return new ResponseEntity<>(responseDTO,HttpStatus.ACCEPTED);
+        return new ResponseEntity<>(responseDTO,HttpStatus.UNAUTHORIZED);
+    }
+
+    @Override
+    public ResponseEntity<ResponseDTO<Map<String, Object>>> updateStatus(Map<String, String> status) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String email = auth.getName();
+
+        UserModel user = userRepository.findByEmail(email)
+                .orElseThrow(() ->
+                        new RuntimeException("User not found"));
+
+        if(CPT_SYTMUtil.CHECK_ROLE(user.getRole().toLowerCase())) {
+            ResponseHeadDTO responseHeadDTO = new ResponseHeadDTO(CPT_SYTMUtil.SUCCESS , CPT_SYTMUtil.SUCCESS_CODE ,CPT_SYTMUtil.STATUS_UPDATED_SUCCESS);
+            ResponseDTO responseDTO = new ResponseDTO(responseHeadDTO , adminDAO.updateComplaintStatus(Long.parseLong(status.get("id")) , status.get("status")));
+            return new ResponseEntity<>(responseDTO,HttpStatus.ACCEPTED);
+        }
+        ResponseHeadDTO responseHeadDTO = new ResponseHeadDTO(CPT_SYTMUtil.FAILURE ,CPT_SYTMUtil.UNAUTHORIZED_CODE, CPT_SYTMUtil.USER_UNAUTHORISED);
+        ResponseDTO responseDTO = new ResponseDTO(responseHeadDTO , null);
+        return new ResponseEntity<>(responseDTO,HttpStatus.UNAUTHORIZED);
     }
 }
