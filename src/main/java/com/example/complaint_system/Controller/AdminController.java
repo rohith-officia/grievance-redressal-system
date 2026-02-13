@@ -4,6 +4,7 @@ import com.example.complaint_system.DTO.ResponseDTO;
 import com.example.complaint_system.Service.AdminService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -22,6 +23,7 @@ public class AdminController {
     }
 
     @PostMapping("Update/Status/")
+//    @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<ResponseDTO<Map<String,Object>>> updateStatus(@RequestBody Map<String,String> status) {
         return adminService.updateStatus(status);
     }
